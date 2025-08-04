@@ -1,5 +1,5 @@
 def clean_text(t):
-    t = t.replace('Nlembers', 'Members').replace("Total Fans", "TotalFans")
+    t = t.replace('Nlembers', 'Members')
     return t
 
 def extract_member_from_text(lines):
@@ -14,7 +14,7 @@ def extract_member_from_text(lines):
         if "Members" in lines[i] or "Leader" in lines[i]:
             i += 1
             # Tên member từ sau "Members"/"Leader" đến trước "TotalFans"
-            while i < len(lines) and 'TotalFans' not in lines[i]:
+            while i < len(lines) and 'Total Fans' not in lines[i]:
                 current_member['name'] += clean_text(lines[i]) + ' '
                 i += 1
             if not i < len(lines):
@@ -22,7 +22,7 @@ def extract_member_from_text(lines):
                 break
             current_member['name'] = current_member['name'].strip()
             # Số fans đằng sau "TotalFans"
-            if "TotalFans" in lines[i]:
+            if "Total Fans" in lines[i]:
                 i += 1
                 current_member['fans'] = clean_text(lines[i]).replace(',', '').replace('.', '') # Loại bỏ dấu
                 members.append(current_member)

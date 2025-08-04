@@ -31,7 +31,6 @@ def display_loop(title):
             pass
         if cv2.waitKey(30) & 0xFF == ord('q'):
             break
-    # main.running = False
     cv2.destroyAllWindows()
 
 def stop_display():
