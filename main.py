@@ -9,30 +9,25 @@ from PIL import Image
 import numpy as np
 
 from display import *
-from screenshot import take_screenshot
+from screenshot import take_screenshot, mask_info_icon
 from text_extraction import extract_member_from_text
 
 
 # ----------------------------------------------------------------
+# Tên cửa sổ game
 window_title = "Umamusume"
 
+# Tỉ lệ crop trái, phải, trên, dưới
 crop_ratio_left = 0.14
 crop_ratio_right = 0.62
 crop_ratio_top = 0.45
 crop_ratio_bottom = 0.22
 
-
-
-# ----------------------------------------------------------------
-
-
-## EasyOCR
-# reader = easyocr.Reader(['en', 'ja'], gpu = True)
 # PaddleOCR
 ocr = PaddleOCR(use_angle_cls=True)
 
 # ----------------------------------------------------------------
-def scroll_down(amount = 100, step=2):
+def scroll_down(amount=100, step=3):
     try:
         window = gw.getWindowsWithTitle(window_title)[0]
         window.activate()
@@ -45,6 +40,7 @@ def scroll_down(amount = 100, step=2):
     width = int(width * (1 - crop_ratio_left - crop_ratio_right))
     height = int(height * (1 - crop_ratio_top - crop_ratio_bottom))
 
+    # Vị trí chuột scroll
     x = left + width
     y = top + width/2
     
@@ -54,10 +50,6 @@ def scroll_down(amount = 100, step=2):
         time.sleep(0.05)
 
 def ocr_to_lines(image):
-    # Easy OCR
-    # result = reader.readtext(image)
-    # lines = [res[1] for res in result]
-
     # PaddleOCR
     result = ocr.predict(screen)
     lines = result[0]['rec_texts']
@@ -83,8 +75,7 @@ try:
     while running:
         screen = take_screenshot(crop_ratio_left, crop_ratio_right, crop_ratio_top, crop_ratio_bottom)
         if screen is not None:
-            # screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
-            # screen = cv2.adaptiveThreshold(screen, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+            screen = mask_info_icon(screen)
             add_frame(screen)
         
         lines = ocr_to_lines(screen)
@@ -95,9 +86,8 @@ try:
             if member not in members:
                 members.append(member)
 
-        # DEBUG
-        print(lines)
-        print(found_members)
+        
+        # print(lines) # DEBUG
 
         # Hiển thị danh sách mỗi lần có cập nhật
         if len(members) > member_num:

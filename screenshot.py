@@ -13,8 +13,27 @@ window_title = "Umamusume"
 
 # pyautogui.screenshot(region=(window.left, window.top, window.width, window.height)).save('temp.png')
 
+# Hàm mask icon thông tin người chơi (preprocessing cho OCR)
+def mask_info_icon(image):
+    minRadius = image.shape[1]//40 # Đối với hình đã được crop
+
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, dp=1.2, minDist=20,
+                            param1=60, param2=35, minRadius=minRadius, maxRadius=int(minRadius*1.5))
+
+    if circles is not None:
+        circles = np.round(circles[0, :]).astype("int")
+        for (cx, cy, r) in circles:
+            r = int(r * 1.2) # Tăng bán kinh để đủ cover icon
+            cv2.circle(image, (cx, cy), r, (0, 0, 0), -1)  # Vẽ màu lên vùng icon
+            
+    return image
+
+# Hàm chụp ảnh window game dựa trên crop_ratio 
 def take_screenshot(crop_ratio_left, crop_ratio_right, crop_ratio_top, crop_ratio_bottom):
     # screen = cv2.imread('assets/screen_copy.png', cv2.IMREAD_COLOR_BGR)
+    # height, width = screen.shape[:2]
+
     # Tìm cửa sổ theo tiêu đề 
     try:
         window = gw.getWindowsWithTitle(window_title)[0]
@@ -22,10 +41,6 @@ def take_screenshot(crop_ratio_left, crop_ratio_right, crop_ratio_top, crop_rati
     except IndexError:
         print("Không tìm thấy game!")
         return None
-
-
-    # height, width = screen.shape[:2]
-
 
     # Crop ảnh theo tỉ lệ
     left, top, width, height = window.left, window.top, window.width, window.height
@@ -41,7 +56,5 @@ def take_screenshot(crop_ratio_left, crop_ratio_right, crop_ratio_top, crop_rati
     screen = np.array(screen)
     # Chuyển kênh màu từ RGB sang BGR (do OpenCV dùng BGR)
     screen = cv2.cvtColor(screen, cv2.COLOR_RGB2BGR)
-
-    
 
     return screen
