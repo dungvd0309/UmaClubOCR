@@ -1,5 +1,4 @@
 import pyautogui
-import pygetwindow as gw
 import cv2
 import numpy as np
 from PIL import Image, ImageEnhance
@@ -36,7 +35,10 @@ def take_screenshot(region):
 
     # Take screenshot
     pil_img = pyautogui.screenshot(region=(left, top, width, height))
-    pil_img = pil_img.resize((pil_img.width * 2, pil_img.height * 2), Image.BICUBIC) # x2 scale
+
+    # Enhance screenshot
+    scale = 1000 // pil_img.width # Scale ratio
+    pil_img = pil_img.resize((pil_img.width * scale, pil_img.height * scale), Image.BICUBIC) 
     pil_img = pil_img.convert("L") # Greyscale
     pil_img = ImageEnhance.Contrast(pil_img).enhance(1.5) # Increase contract
 

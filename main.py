@@ -9,7 +9,6 @@ from ocr.ocr_utils import init_ocr, ocr_to_lines, extract_members_from_lines
 
 # Constants
 FAILED_TRIES = 3  
-
 CROP_RATIO_LEFT = 0.14
 CROP_RATIO_RIGHT = 0.62
 CROP_RATIO_TOP = 0.45
@@ -18,11 +17,23 @@ CROP_RATIOS = (CROP_RATIO_LEFT, CROP_RATIO_RIGHT, CROP_RATIO_TOP, CROP_RATIO_BOT
 
 def export_csv(members):
     """
-    Exports a csv from member list with the format of "output_%d_%m_%Y.csv"
+    Exports a csv from member list to "output/members_YYYYmmdd_HHMMSS.csv"
     """
-    from datetime import date
-    today = date.today()
-    file_name = f'output_{today.strftime("%d_%m_%Y")}.csv'
+    from datetime import datetime
+    import os
+
+    directory = "output"
+    base_name = "members"
+
+    try:
+        os.mkdir(directory)
+    except FileExistsError:
+        pass
+    except Exception as e:
+        print(f"[ERROR] {e}")
+
+    now = datetime.now()
+    file_name = f'{directory}/{base_name}_{now.strftime("%Y%m%d_%H%M%S")}.csv'
     with open(file_name, 'w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         # Header

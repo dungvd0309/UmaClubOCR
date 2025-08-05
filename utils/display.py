@@ -1,17 +1,8 @@
 import cv2
 import queue
-import time
 
 frame_queue = queue.Queue(maxsize=1)
 running = True
-
-def display_scale(title, image, scale = 1.0):
-    image = cv2.resize(image, (0, 0), fx=scale, fy=scale)
-    cv2.imshow(title, image)
-
-def display_scale_list(title, images, scale = 0.0):
-    for i in range(len(images)):
-        display_scale(f"{title} {i}", images[i], scale)
 
 def add_frame(image):
     try:
