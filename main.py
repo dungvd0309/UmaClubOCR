@@ -83,7 +83,7 @@ def main():
                     members.append(member)
                     print(member)
 
-            # print(lines) # DEBUG
+            # print(lines) # FOR DEBUGGING
 
             # Check for updates and reset retry counter if new members are found
             if len(members) > member_num:
