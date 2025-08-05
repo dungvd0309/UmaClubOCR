@@ -7,14 +7,19 @@ from utils.screenshot import take_screenshot, mask_info_icon
 from utils.window import activate_window, scroll_down, get_crop_region
 from ocr.ocr_utils import init_ocr, ocr_to_lines, extract_members_from_lines
 
-# Constants
-FAILED_TRIES = 3  
+# --- CONFIGS ---
+# Set to True to display the screenshot window, False to hide it.
+DISPLAY_ENABLED = False
+# Numbers of tries before the script stops if no new members are found.
+FAILED_TRIES = 3 
+# Crop ratios for member lists in Club Info screen 
 CROP_RATIO_LEFT = 0.14
 CROP_RATIO_RIGHT = 0.62
 CROP_RATIO_TOP = 0.45
 CROP_RATIO_BOTTOM = 0.22
 CROP_RATIOS = (CROP_RATIO_LEFT, CROP_RATIO_RIGHT, CROP_RATIO_TOP, CROP_RATIO_BOTTOM) 
-
+# --- END CONFIGS ---
+ 
 def export_csv(members):
     """
     Exports a csv from member list to "output/members_YYYYmmdd_HHMMSS.csv"
@@ -48,8 +53,10 @@ def main():
     scan_successful = False
 
     # A thread to display screenshots
-    display_t = threading.Thread(target=display_loop, args=['Screenshot'])
-    display_t.start()
+    display_t = None
+    if DISPLAY_ENABLED:
+        display_t = threading.Thread(target=display_loop, args=['Screenshot'])
+        display_t.start()
 
     try:
         print("[INFO] PaddleOCR initializing...")
@@ -71,7 +78,8 @@ def main():
             screen = take_screenshot(crop_region)
             if screen is not None:
                 screen = mask_info_icon(screen)
-                add_frame(screen)
+                if DISPLAY_ENABLED:
+                    add_frame(screen)
             
             # OCR
             lines = ocr_to_lines(ocr, screen)
@@ -94,7 +102,7 @@ def main():
                 non_update_count += 1
 
             # Stop if the display window is closed
-            if not display_t.is_alive():
+            if display_t and not display_t.is_alive():
                 raise KeyboardInterrupt("Display window was closed.")
             
             # Stop after a number of FAILED_TRIES with no updates
@@ -114,8 +122,9 @@ def main():
 
     finally:
         print("-" * 50)
-        stop_display()
-        display_t.join()
+        if display_t:
+            stop_display()
+            display_t.join()
 
     # Only export if the scan completed successfully and we have members
     if scan_successful and len(members) > 0:
