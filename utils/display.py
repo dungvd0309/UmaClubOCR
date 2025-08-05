@@ -1,7 +1,6 @@
 import cv2
 import queue
 import time
-# import main
 
 frame_queue = queue.Queue(maxsize=1)
 running = True
@@ -20,7 +19,6 @@ def add_frame(image):
     except queue.Full:
         _ = frame_queue.get_nowait
         frame_queue.put(image)
-    # time.sleep(0.5)
 
 def display_loop(title):
     while running:
