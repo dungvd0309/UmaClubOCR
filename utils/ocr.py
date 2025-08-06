@@ -1,12 +1,23 @@
 from paddleocr import PaddleOCR
 
+ocr = None
+
 def init_ocr():
     """
     Initializes and returns a PaddleOCR instance
     """
-    return PaddleOCR(use_angle_cls=True)
+    global ocr
+    ocr = PaddleOCR(
+        use_doc_orientation_classify=False,
+        use_doc_unwarping=False,
+        use_angle_cls=False,
+        text_det_thresh=0.5,      
+        text_det_box_thresh=0.7, 
+        text_recognition_batch_size=6,
+        enable_mkldnn=True,
+    )
 
-def ocr_to_lines(ocr, image):
+def ocr_to_lines(image):
     """
     Performs OCR on the given image and returns the recognized text lines.
     """

@@ -22,7 +22,7 @@ def mask_info_icon(image):
         circles = np.round(circles[0, :]).astype("int")
         for (cx, cy, r) in circles:
             r = int(r * 1.2) # Increase radius to fully cover the icon
-            cv2.circle(image, (cx, cy), r, (0, 255, 0), -1)  # Draw color over the icon area
+            cv2.circle(image, (cx, cy), r, (255, 255, 255), -1)  # Draw color over the icon area
             
     return image
 

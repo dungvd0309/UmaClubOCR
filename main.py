@@ -3,13 +3,13 @@ import time
 import threading
 
 from utils.display import display_loop, add_frame, stop_display
+from utils.ocr import init_ocr, ocr_to_lines, extract_members_from_lines
 from utils.screenshot import take_screenshot, mask_info_icon
 from utils.window import activate_window, scroll_down, get_crop_region
-from ocr.ocr_utils import init_ocr, ocr_to_lines, extract_members_from_lines
 
 # --- CONFIGS ---
 # Set to True to display the screenshot window, False to hide it.
-DISPLAY_ENABLED = False
+DISPLAY_ENABLED = True
 # Numbers of tries before the script stops if no new members are found.
 FAILED_TRIES = 3 
 # Crop ratios for member lists in Club Info screen 
@@ -60,7 +60,7 @@ def main():
 
     try:
         print("[INFO] PaddleOCR initializing...")
-        ocr = init_ocr()
+        init_ocr()
 
         print("-" * 50)
         print("[INFO] Make sure you are at Club Info screen.")
@@ -82,7 +82,7 @@ def main():
                     add_frame(screen)
             
             # OCR
-            lines = ocr_to_lines(ocr, screen)
+            lines = ocr_to_lines(screen)
 
             # Add member if not already in the list
             found_members = extract_members_from_lines(lines)
