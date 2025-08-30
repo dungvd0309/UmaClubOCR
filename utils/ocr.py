@@ -29,6 +29,7 @@ def extract_members_from_lines(lines):
     """
     Parses a list of text lines to extract club member names and their fan counts.
     """
+    roles = ["Members", "Leader", "Officer"]
     members = []
     current_member = []
     i = 0
@@ -36,7 +37,7 @@ def extract_members_from_lines(lines):
     while i < len(lines):
         current_member = {'name': '', 'fans': ''}
 
-        if "Members" in lines[i] or "Leader" in lines[i]:
+        if lines[i] in roles:
             # Member name: from after "Members" or "Leader" to before "Total Fans"
             i += 1
             while i < len(lines) and 'Total Fans' not in lines[i]:
