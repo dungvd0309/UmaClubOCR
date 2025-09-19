@@ -1,6 +1,6 @@
 # Umamusume Club OCR
 
-This is a simple script for extracting member names and total fans from clan members in Umamusume.
+This is a simple script for extracting member names and total fans from clan member list in Umamusume.
 
 **Note:** Only work with the Steam version of the game.
 
