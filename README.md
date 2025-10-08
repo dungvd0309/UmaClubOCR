@@ -16,7 +16,7 @@ This is a simple script for extracting member names and total fans from clan mem
 
 ## Prerequisites
 
-- Python 3.8.x - 3.12.x.
+- Python 3.12.x.
 - The packages listed in `requirements.txt`.
 
 ## Installation
